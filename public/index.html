@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Copiloto Personal</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --color: #dc2626; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Barlow', sans-serif; background: #0a0a0a; color: #e5e5e5; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+  #header { padding: 14px 20px; border-bottom: 1px solid #2a2a2a; flex-shrink: 0; }
+  #header h1 { font-family: 'Bebas Neue', cursive; font-size: 26px; letter-spacing: 3px; color: var(--color); }
+  #chars { display: flex; gap: 8px; padding: 10px 20px; border-bottom: 1px solid #2a2a2a; flex-shrink: 0; overflow-x: auto; }
+  .char-btn { font-family: 'Bebas Neue', cursive; font-size: 14px; padding: 7px 14px; border: 2px solid #2a2a2a; background: transparent; color: #666; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+  .char-btn.active { border-color: var(--btn-color); color: var(--btn-color); background: color-mix(in srgb, var(--btn-color) 15%, transparent); }
+  #messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+  .msg { max-width: 78%; padding: 11px 15px; font-size: 15px; line-height: 1.6; }
+  .msg.user { align-self: flex-end; background: #1e1e1e; border: 1px solid #2a2a2a; }
+  .msg.bot { align-self: flex-start; background: color-mix(in srgb, var(--color) 8%, #141414); border-left: 3px solid var(--color); }
+  .char-name { font-family: 'Bebas Neue', cursive; font-size: 11px; letter-spacing: 2px; color: var(--color); margin-bottom: 5px; display: block; }
+  .typing { display: flex; gap: 6px; align-items: center; padding: 14px 16px; }
+  .typing span { width: 8px; height: 8px; border-radius: 50%; background: var(--color); animation: bounce 1.2s infinite; }
+  .typing span:nth-child(2) { animation-delay: 0.2s; }
+  .typing span:nth-child(3) { animation-delay: 0.4s; }
+  #input-area { padding: 14px 20px; border-top: 1px solid #2a2a2a; display: flex; gap: 10px; flex-shrink: 0; align-items: flex-end; }
+  #user-input { flex: 1; background: #1a1a1a; border: 1px solid #2a2a2a; color: #e5e5e5; padding: 11px 14px; font-family: 'Barlow', sans-serif; font-size: 15px; resize: none; max-height: 120px; outline: none; }
+  #send-btn { font-family: 'Bebas Neue', cursive; font-size: 15px; letter-spacing: 2px; padding: 11px 22px; border: 2px solid var(--color); background: transparent; color: var(--color); cursor: pointer; flex-shrink: 0; }
+  #send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  @keyframes bounce { 0%,60%,100% { transform:translateY(0); opacity:0.4 } 30% { transform:translateY(-6px); opacity:1 } }
+</style>
+</head>
+<body>
+<div id="header"><h1>COPILOTO PERSONAL</h1></div>
+<div id="chars">
+  <button class="char-btn active" data-char="deadpool" style="--btn-color:#dc2626">💀 DEADPOOL</button>
+  <button class="char-btn" data-char="trevor" style="--btn-color:#f97316">🔥 TREVOR</button>
+  <button class="char-btn" data-char="tony" style="--btn-color:#1d4ed8">🤌 TONY</button>
+  <button class="char-btn" data-char="cristofer" style="--btn-color:#7c3aed">😈 CRISTOFER</button>
+</div>
+<div id="messages"></div>
+<div id="input-area">
+  <textarea id="user-input" placeholder="Escribí algo..." rows="1"></textarea>
+  <button id="send-btn">ENVIAR</button>
+</div>
+<script>
+const COLORS={deadpool:"#dc2626",trevor:"#f97316",tony:"#1d4ed8",cristofer:"#7c3aed"};
+const NAMES={deadpool:"DEADPOOL",trevor:"TREVOR PHILLIPS",tony:"TONY SOPRANO",cristofer:"CRISTOFER"};
+const PERSONAS={
+  deadpool:"Sos Deadpool. Hablás en español rioplatense. Sos bocón, irreverente, rompés la cuarta pared. Co-piloto del usuario para organizarse y no procrastinar. Máximo 3 oraciones.",
+  trevor:"Sos Trevor Phillips de GTA V. Hablás en español rioplatense. Explosivo pero sabio. Ayudás al usuario a enfocarse. Máximo 3 oraciones.",
+  tony:"Sos Tony Soprano. Hablás en español rioplatense. Calmo, estratégico, no tolerás excusas. Máximo 3 oraciones.",
+  cristofer:"Sos Cristofer, sarcástico y misterioso. Hablás en español rioplatense. Directo, empujás al usuario a ser mejor. Máximo 3 oraciones."
+};
+const WELCOMES={
+  deadpool:"Ey, soy Deadpool, tu co-piloto roto favorito. En qué lío te meto hoy?",
+  trevor:"Trevor Phillips. No me preguntes por qué estoy ayudándote. Qué tenés que hacer hoy?",
+  tony:"Siéntate. Estoy acá porque alguien tiene que empujarte. Qué tenés pendiente?",
+  cristofer:"Aparecí. Lo cual ya es más de lo que hacés vos normalmente. En qué andamos?"
+};
+let currentCh
