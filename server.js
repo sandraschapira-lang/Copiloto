@@ -15,7 +15,7 @@ app.post("/chat", async (req, res) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-api-key": "sk-ant-api03-wD9...AAAA",
+        "x-api-key": "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",
         "anthropic-version": "2023-06-01"
       },
       body: JSON.stringify({ model: "claude-haiku-4-5-20251001", max_tokens: 300, system, messages })
